@@ -31,7 +31,7 @@ function InitSuperVim()
 		call system(printf('mkdir -p %s', g:SuperVim_home))
 	endif
 	let l:default_vim_home = $HOME.'/.vim'
-	if isdirectory(l:default_vim_home)
+	if !has('nvim') && isdirectory(l:default_vim_home)
 		echomsg 'backup your ~/.vim directory'
 		call system(printf('mv %s{,_%s}',
 					\ l:default_vim_home, strftime('%Y%m%d%H%M%S')))
@@ -121,6 +121,7 @@ if has('python3')
 	endif
 endif
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
 " }}}
@@ -155,7 +156,7 @@ set textwidth=78
 set colorcolumn=+1
 set cursorline
 set list
-set listchars=tab:>-,trail:-
+set listchars=tab:\|\ ,trail:-
 set laststatus=2
 set wildmenu
 set splitright
@@ -293,7 +294,7 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	let g:gutentags_add_default_project_roots = 0
 	let g:gutentags_ctags_tagfile = 'tags'
 	let g:gutentags_cache_dir = g:SuperVim_cache_dir.'/tags'
-	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extras=+q']
+	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 	function InitGutentagsCacheDir()
@@ -347,11 +348,31 @@ nnoremap <Leader>w :update<CR>
 nnoremap <Leader>q :quit<CR>
 " Key: <Leader>p | 切换粘贴模式
 nnoremap <Leader>p :setlocal paste!<CR>
+" Key: <Leader><Leader> | 取消高亮
+nnoremap <Leader><Leader> :nohlsearch<CR>
+" Key: <Leader>bs | 搜索缓冲区
+nnoremap <leader>bs :cex []<BAR>bufdo vimgrepadd @@g %<BAR>cw<s-left><s-left><right>
 
 " }}}
 " ============================================================================
 " 其他 {{{
 " ============================================================================
+
+" ----------------------------------------------------------------------------
+" 切换到Git根目录 {{{
+" ----------------------------------------------------------------------------
+function! s:root()
+	let root = systemlist('git rev-parse --show-toplevel')[0]
+	if v:shell_error
+		echo 'Not in git repo'
+	else
+		execute 'cd' root
+		echo 'Changed directory to: '.root
+	endif
+endfunction
+command! Root call s:root()
+" }}}
+" ----------------------------------------------------------------------------
 
 " }}}
 " ============================================================================
