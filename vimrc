@@ -309,10 +309,10 @@ endif
 " ----------------------------------------------------------------------------
 " Plugin: deoplete | 自动补全框架 {{{
 " ----------------------------------------------------------------------------
-if has('python3') && isdirectory(g:SuperVim_cache_dir.'/deoplete.nvim')
+if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
 	let g:deoplete#enable_at_startup = 1
 	if executable('clang')
-				\ && isdirectory(g:SuperVim_cache_dir.'/deoplete-clangx')
+				\ && isdirectory(g:SuperVim_plug_dir.'/deoplete-clangx')
 		call deoplete#custom#var('clangx', 'clang_binary',
 					\ system('which clang'))
 	endif
