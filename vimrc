@@ -118,7 +118,7 @@ if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
 endif
-" 自动补全
+" deoplete 自动补全系列
 if has('python3')
 	if has('nvim')
 		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -127,6 +127,7 @@ if has('python3')
 		Plug 'roxma/nvim-yarp'
 		Plug 'roxma/vim-hug-neovim-rpc'
 	endif
+	Plug 'Shougo/echodoc.vim'
 	if executable('clang')
 		Plug 'Shougo/deoplete-clangx'
 	endif
@@ -170,9 +171,11 @@ set cursorline
 set list
 set listchars=tab:\|\ ,trail:-
 set laststatus=2
+set noshowmode
 set wildmenu
 set splitright
 set splitbelow
+set completeopt=menu
 
 " }}}
 " ----------------------------------------------------------------------------
@@ -336,11 +339,20 @@ endif
 " ----------------------------------------------------------------------------
 if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
 	let g:deoplete#enable_at_startup = 1
+	call deoplete#custom#option({
+				\ 'auto_complete_delay': 200,
+				\ 'smart_case': v:true,
+				\ 'max_list': 50,
+				\ 'min_pattern_length': 3,
+				\ })
 	if executable('clang')
 				\ && isdirectory(g:SuperVim_plug_dir.'/deoplete-clangx')
 		call deoplete#custom#var('clangx', 'clang_binary',
 					\ system('which clang'))
 	endif
+
+	" Plugin: echodoc.vim | 显示函数签名
+	let g:echodoc_enable_at_startup = 1
 endif
 
 " }}}
@@ -349,7 +361,7 @@ endif
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-fugitive')
 	" Key: <Leader>gs | 打开窗口进行 git status 操作
-	nnoremap <Leader>gs :Gstatus<CR>gg<C-n>
+	map     <Leader>gs :Gstatus<CR>gg<C-n>
 	" Key: <Leader>gd | vimdiff 当前文件与 HEAD 版本
 	nnoremap <Leader>gd :Gdiffsplit!<CR>
 	" Key: <Leader>gc | 打开窗口进行 git commit 操作
