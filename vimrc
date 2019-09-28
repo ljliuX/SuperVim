@@ -1,7 +1,14 @@
 " ============================================================================
+"                 _____                      _    ___
+"                / ___/__  ______  ___  ____| |  / (_)___ ___
+"                \__ \/ / / / __ \/ _ \/ ___/ | / / / __ `__ \
+"               ___/ / /_/ / /_/ /  __/ /   | |/ / / / / / / /
+"              /____/\__,_/ .___/\___/_/    |___/_/_/ /_/ /_/
+"                        /_/
+"
 " Author: ljliu <ljliu.cc@gmail.com>
 " Source: https://github.com/ljliuX/SuperVim
-" Last Modified: 2019-06-16 15:39
+" Last Modified: 2019-09-28 21:16
 " ============================================================================
 " SuperVim {{{
 " ============================================================================
@@ -17,6 +24,9 @@ let g:SuperVim_plug_dir = g:SuperVim_home.'/plugged'
 
 " 缓存文件目录
 let g:SuperVim_cache_dir = g:SuperVim_home.'/cache'
+
+" 设置 leader 键
+let mapleader = "\<Space>"
 
 " }}}
 " ============================================================================
@@ -103,8 +113,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'neomake/neomake'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 if executable('ctags')
-	Plug 'majutsushi/tagbar'
+	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
 endif
 " 自动补全
@@ -152,6 +163,7 @@ filetype plugin indent on
 set shortmess=atI
 set mouse=
 set number
+set relativenumber
 set textwidth=78
 set colorcolumn=+1
 set cursorline
@@ -215,6 +227,18 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-airline')
 	if isdirectory(g:SuperVim_plug_dir.'/ale')
 		let g:airline#extensions#ale#enabled = 1
 	endif
+	let g:airline#extensions#tabline#buffer_idx_mode = 1
+	nmap <leader>1 <Plug>AirlineSelectTab1
+	nmap <leader>2 <Plug>AirlineSelectTab2
+	nmap <leader>3 <Plug>AirlineSelectTab3
+	nmap <leader>4 <Plug>AirlineSelectTab4
+	nmap <leader>5 <Plug>AirlineSelectTab5
+	nmap <leader>6 <Plug>AirlineSelectTab6
+	nmap <leader>7 <Plug>AirlineSelectTab7
+	nmap <leader>8 <Plug>AirlineSelectTab8
+	nmap <leader>9 <Plug>AirlineSelectTab9
+	nmap <leader>- <Plug>AirlineSelectPrevTab
+	nmap <leader>+ <Plug>AirlineSelectNextTab
 endif
 
 " }}}
@@ -264,6 +288,7 @@ let g:startify_custom_header = [
 			\ '              /____/\__,_/ .___/\___/_/    |___/_/_/ /_/ /_/  ',
 			\ '                        /_/                                   '
 			\ ]
+let g:startify_change_to_dir = 0
 
 " }}}
 " ----------------------------------------------------------------------------
@@ -320,13 +345,26 @@ endif
 
 " }}}
 " ----------------------------------------------------------------------------
+" Plugin: vim-fugitive | Git 工具 {{{
+" ----------------------------------------------------------------------------
+if isdirectory(g:SuperVim_plug_dir.'/vim-fugitive')
+	" Key: <Leader>gs | 打开窗口进行 git status 操作
+	nnoremap <Leader>gs :Gstatus<CR>gg<C-n>
+	" Key: <Leader>gd | vimdiff 当前文件与 HEAD 版本
+	nnoremap <Leader>gd :Gdiffsplit!<CR>
+	" Key: <Leader>gc | 打开窗口进行 git commit 操作
+	nnoremap <Leader>gc :Gcommit<CR>
+	" Key: <Leader>gl | 打开 quickfix 窗口，显示提交记录
+	nnoremap <Leader>gl :Glog!<CR>
+endif
+
+" }}}
+" ----------------------------------------------------------------------------
 
 " }}}
 " ============================================================================
 " 快捷键映射 {{{
 " ============================================================================
-
-let mapleader = "\<Space>"
 
 " Key: <C-j> | 插入模式，移动光标到上一行
 inoremap <C-j> <C-o>j
@@ -350,8 +388,6 @@ nnoremap <Leader>q :quit<CR>
 nnoremap <Leader>p :setlocal paste!<CR>
 " Key: <Leader><Leader> | 取消高亮
 nnoremap <Leader><Leader> :nohlsearch<CR>
-" Key: <Leader>bs | 搜索缓冲区
-nnoremap <leader>bs :cex []<BAR>bufdo vimgrepadd @@g %<BAR>cw<s-left><s-left><right>
 
 " }}}
 " ============================================================================
@@ -373,6 +409,11 @@ endfunction
 command! Root call s:root()
 " }}}
 " ----------------------------------------------------------------------------
+
+" ----------------------------------------------------------------------------
+" 参考资料 {{{
+" ----------------------------------------------------------------------------
+" https://github.com/junegunn/dotfiles/blob/master/vimrc
 
 " }}}
 " ============================================================================
