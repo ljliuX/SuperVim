@@ -361,7 +361,7 @@ endif
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-fugitive')
 	" Key: <Leader>gs | 打开窗口进行 git status 操作
-	map     <Leader>gs :Gstatus<CR>gg<C-n>
+	map      <Leader>gs :Gstatus<CR>gg<C-n>
 	" Key: <Leader>gd | vimdiff 当前文件与 HEAD 版本
 	nnoremap <Leader>gd :Gdiffsplit!<CR>
 	" Key: <Leader>gc | 打开窗口进行 git commit 操作
