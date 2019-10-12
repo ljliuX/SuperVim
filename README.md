@@ -24,6 +24,6 @@ curl -Lo ~/.config/nvim/init.vim \
 
 ### Reference
 
-[Gtags][1]: GNU Global / Gtags 类似于 Ctags 的源代码标签工具
+[Gtags][1] GNU Global / Gtags 类似于 Ctags 的源代码标签工具
 
-[1][http://www.gnu.org/software/global]
+[1]: http://www.gnu.org/software/global
