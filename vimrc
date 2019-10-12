@@ -117,6 +117,9 @@ Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
+	if executable('gtags-cscope') && executable('gtags')
+		Plug 'skywind3000/gutentags_plus'
+	endif
 endif
 if has('python3')
 	" deoplete 自动补全系列
@@ -320,19 +323,42 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	if executable('gtags-cscope') && executable('gtags')
 		let g:gutentags_modules += ['gtags_cscope']
 	endif
-	let g:gutentags_project_root = ['.root', '.git', '.svn']
+	" 在项目根目录执行"touch .root"以激活自动标签功能
+	let g:gutentags_project_root = ['.root']
 	let g:gutentags_add_default_project_roots = 0
 	let g:gutentags_ctags_tagfile = 'tags'
 	let g:gutentags_cache_dir = g:SuperVim_cache_dir.'/tags'
 	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+	let g:gutentags_auto_add_gtags_cscope = 0
 	function InitGutentagsCacheDir()
 		if !isdirectory(g:gutentags_cache_dir)
 			call system(printf('mkdir -p %s', g:gutentags_cache_dir))
 		endif
 	endfunction
 	call InitGutentagsCacheDir()
+
+	" Plugin: gutentags_plus | Gtags标签数据库管理
+	let g:gutentags_plus_nomap = 1
+	" Key: <Leader>cs | 查看光标下符号的引用
+	noremap <silent> <Leader>cs :GscopeFind s <C-r><C-w><CR>
+	" Key: <Leader>cg | 查看光标下符号的定义
+	noremap <silent> <Leader>cg :GscopeFind g <C-r><C-w><CR>
+	" Key: <Leader>cc | 查看有哪些函数调用了该函数
+	noremap <silent> <Leader>cc :GscopeFind c <C-r><C-w><CR>
+	" Key: <Leader>ct | 搜索光标下的文本
+	noremap <silent> <Leader>ct :GscopeFind t <C-r><C-w><CR>
+	" Key: <Leader>ce | egrep搜索光标下模式串
+	noremap <silent> <Leader>ce :GscopeFind e <C-r><C-w><CR>
+	" Key: <Leader>cf | 查找光标下的文件
+	noremap <silent> <Leader>cf :GscopeFind f <C-r>=expand("<cfile>")<CR><CR>
+	" Key: <Leader>ci | 查找哪些文件include了本文件
+	noremap <silent> <Leader>ci :GscopeFind i <C-r>=expand("<cfile>")<CR><CR>
+	" Key: <Leader>cd | 当前函数调用了哪些函数
+	noremap <silent> <Leader>cd :GscopeFind d <C-r><C-w><CR>
+	" Key: <Leader>ca | 当前符号在什么地方被赋值
+	noremap <silent> <Leader>ca :GscopeFind a <C-r><C-w><CR>
 endif
 
 " }}}
@@ -448,6 +474,7 @@ command! Root call s:root()
 " 参考资料 {{{
 " ----------------------------------------------------------------------------
 " https://github.com/junegunn/dotfiles/blob/master/vimrc
+" https://zhuanlan.zhihu.com/p/36279445
 
 " }}}
 " ============================================================================
