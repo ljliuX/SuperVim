@@ -118,8 +118,8 @@ if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
 endif
-" deoplete 自动补全系列
 if has('python3')
+	" deoplete 自动补全系列
 	if has('nvim')
 		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	else
@@ -131,6 +131,8 @@ if has('python3')
 	if executable('clang')
 		Plug 'Shougo/deoplete-clangx'
 	endif
+	" 翻译工具
+	Plug 'voldikss/vim-translate-me'
 endif
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'tpope/vim-fugitive'
@@ -368,6 +370,26 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-fugitive')
 	nnoremap <Leader>gc :Gcommit<CR>
 	" Key: <Leader>gl | 打开 quickfix 窗口，显示提交记录
 	nnoremap <Leader>gl :Glog!<CR>
+endif
+
+" }}}
+" ----------------------------------------------------------------------------
+" Plugin: vim-translate-me | 翻译工具 {{{
+" ----------------------------------------------------------------------------
+if isdirectory(g:SuperVim_plug_dir.'/vim-translate-me')
+	let g:vtm_default_mapping = 0
+	let g:vtm_target_lang = 'zh'
+	let g:vtm_default_engines = ['youdao', 'google']
+	let g:vtm_history_dir = g:SuperVim_cache_dir.'/translate'
+	function InitTranslateCacheDir()
+		if !isdirectory(g:vtm_history_dir)
+			call system(printf('mkdir -p %s', g:vtm_history_dir))
+		endif
+	endfunction
+	call InitTranslateCacheDir()
+	" Key: <Leader>t | 打开弹窗翻译光标下文本，两次进入弹窗，q退出
+	nmap <silent> <Leader>t <Plug>TranslateW
+	vmap <silent> <Leader>t <Plug>TranslateWV
 endif
 
 " }}}
