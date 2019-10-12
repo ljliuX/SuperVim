@@ -36,7 +36,7 @@ let mapleader = "\<Space>"
 " ----------------------------------------------------------------------------
 " SuperVim 运行目录 {{{
 " ----------------------------------------------------------------------------
-function InitSuperVim()
+function! InitSuperVim()
 	if !isdirectory(g:SuperVim_home)
 		call system(printf('mkdir -p %s', g:SuperVim_home))
 	endif
@@ -140,79 +140,6 @@ endif
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'tpope/vim-fugitive'
 call plug#end()
-
-" }}}
-" ============================================================================
-" 基础设置 {{{
-" ============================================================================
-
-" ----------------------------------------------------------------------------
-" 行为 {{{
-" ----------------------------------------------------------------------------
-set autoread
-set autowrite
-set lazyredraw
-set timeoutlen=500
-set fileformats=unix,dos,mac
-set fileencodings=ucs-bom,utf-8,cp936,latin1
-set backspace=indent,eol,start
-set ignorecase
-set magic
-set hlsearch
-set incsearch
-filetype plugin indent on
-
-" }}}
-" ----------------------------------------------------------------------------
-" 界面 {{{
-" ----------------------------------------------------------------------------
-set shortmess=atI
-set mouse=
-set number
-set relativenumber
-set textwidth=78
-set colorcolumn=+1
-set cursorline
-set list
-set listchars=tab:\|\ ,trail:-
-set laststatus=2
-set noshowmode
-set wildmenu
-set splitright
-set splitbelow
-set completeopt=menu
-
-" }}}
-" ----------------------------------------------------------------------------
-" 缩进选项 {{{
-" ----------------------------------------------------------------------------
-set nowrap
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set smarttab
-set autoindent
-set smartindent
-
-" }}}
-" ----------------------------------------------------------------------------
-" 颜色主题 {{{
-" ----------------------------------------------------------------------------
-set t_Co=256
-set background=dark
-
-if !exists("g:syntax_on")
-	syntax enable
-endif
-
-try
-	execute 'colorscheme' g:SuperVim_theme
-catch
-	colorscheme desert
-endtry
-
-" }}}
-" ----------------------------------------------------------------------------
 
 " }}}
 " ============================================================================
@@ -332,7 +259,7 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 	let g:gutentags_auto_add_gtags_cscope = 0
-	function InitGutentagsCacheDir()
+	function! InitGutentagsCacheDir()
 		if !isdirectory(g:gutentags_cache_dir)
 			call system(printf('mkdir -p %s', g:gutentags_cache_dir))
 		endif
@@ -407,7 +334,7 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-translate-me')
 	let g:vtm_target_lang = 'zh'
 	let g:vtm_default_engines = ['youdao', 'google']
 	let g:vtm_history_dir = g:SuperVim_cache_dir.'/translate'
-	function InitTranslateCacheDir()
+	function! InitTranslateCacheDir()
 		if !isdirectory(g:vtm_history_dir)
 			call system(printf('mkdir -p %s', g:vtm_history_dir))
 		endif
@@ -423,9 +350,92 @@ endif
 
 " }}}
 " ============================================================================
+" 基础设置 {{{
+" ============================================================================
+
+" ----------------------------------------------------------------------------
+" 行为 {{{
+" ----------------------------------------------------------------------------
+set autoread
+set autowrite
+set lazyredraw
+set timeoutlen=500
+set fileformats=unix,dos,mac
+set fileencodings=ucs-bom,utf-8,cp936,latin1
+set backspace=indent,eol,start
+set ignorecase
+set magic
+set hlsearch
+set incsearch
+filetype plugin indent on
+
+" }}}
+" ----------------------------------------------------------------------------
+" 界面 {{{
+" ----------------------------------------------------------------------------
+set shortmess=atI
+set mouse=
+set number
+set relativenumber
+set textwidth=78
+set colorcolumn=+1
+set cursorline
+set list
+set listchars=tab:\|\ ,trail:-
+set laststatus=2
+set noshowmode
+set wildmenu
+set splitright
+set splitbelow
+set completeopt=menu
+
+" }}}
+" ----------------------------------------------------------------------------
+" 缩进选项 {{{
+" ----------------------------------------------------------------------------
+set nowrap
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smarttab
+set autoindent
+set smartindent
+
+" }}}
+" ----------------------------------------------------------------------------
+" 颜色主题 {{{
+" ----------------------------------------------------------------------------
+set t_Co=256
+set background=dark
+
+if !exists("g:syntax_on")
+	syntax enable
+endif
+
+try
+	execute 'colorscheme' g:SuperVim_theme
+catch
+	colorscheme desert
+endtry
+
+" }}}
+" ----------------------------------------------------------------------------
+
+" }}}
+" ============================================================================
 " 快捷键映射 {{{
 " ============================================================================
 
+" Key: <F1> | 切换行号模式相对/绝对
+nnoremap <F1> :setlocal relativenumber!<CR>
+" Key: ]b | 下一个Buffer
+nnoremap ]b :bnext<CR>
+" Key: [b | 上一个Buffer
+nnoremap [b :bprev<CR>
+" Key: ]t | 下一个Tab
+nnoremap ]t :tabnext<CR>
+" Key: [t | 上一个Tab
+nnoremap [t :tabprev<CR>
 " Key: <C-j> | 插入模式，移动光标到上一行
 inoremap <C-j> <C-o>j
 " Key: <C-k> | 插入模式，移动光标到下一行
@@ -467,14 +477,44 @@ function! s:root()
 	endif
 endfunction
 command! Root call s:root()
+
 " }}}
 " ----------------------------------------------------------------------------
+" TX | 打开tmux分屏窗口执行shell命令，结束后退出 {{{
+" ----------------------------------------------------------------------------
+cnoremap !! TX<Space>
+command! -nargs=1 TX call system('tmux split-window -d -l 16 '.<q-args>)
 
+" }}}
+" ----------------------------------------------------------------------------
+" AUTOCMD {{{
+" ----------------------------------------------------------------------------
+augroup vimrc
+	" 保存vimrc后自动加载
+	au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
+				\| source % | endif
+
+	" 离开插入模式关闭粘贴模式
+	au InsertLeave * silent! set nopaste
+
+	" 自动修改tmux窗口名称
+	if exists('$TMUX') && !exists('$NORENAME')
+		au BufEnter * if empty(&buftype)
+					\| call system('tmux rename-window '.expand('%:t:S'))
+					\| endif
+		au VimLeave * call system('tmux set-window automatic-rename on')
+	endif
+augroup END
+
+" }}}
 " ----------------------------------------------------------------------------
 " 参考资料 {{{
 " ----------------------------------------------------------------------------
 " https://github.com/junegunn/dotfiles/blob/master/vimrc
 " https://zhuanlan.zhihu.com/p/36279445
+
+" }}}
+" ----------------------------------------------------------------------------
 
 " }}}
 " ============================================================================
