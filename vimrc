@@ -261,10 +261,22 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	if !isdirectory(g:gutentags_cache_dir)
 		call system(printf('mkdir -p %s', g:gutentags_cache_dir))
 	endif
-	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
+	let g:gutentags_ctags_extra_args  = ['--fields=+niazS']
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+	if empty(systemlist('ctags --version | grep "Universal Ctags"'))
+		" Exuberant Ctags
+		let g:gutentags_ctags_extra_args += ['--extra=+q']
+	else
+		" Universal Ctags is derived from Exuberant Ctags
+		let g:gutentags_ctags_extra_args += ['--extras=+q']
+		let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+	endif
 	let g:gutentags_auto_add_gtags_cscope = 0
+	" let g:gutentags_trace = 1
+	" gutentags: gtags-cscope job failed, returned: 1
+	" https://github.com/ludovicchabant/vim-gutentags/issues/225
+	" 删除目录 $HOME/.SuperVim/cache 解决
 
 	" Plugin: gutentags_plus | Gtags标签数据库管理
 	let g:gutentags_plus_nomap = 1
