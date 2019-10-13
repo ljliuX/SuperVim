@@ -455,6 +455,10 @@ endtry
 
 " Key: <F1> | 切换行号模式相对/绝对
 nnoremap <F1> :setlocal relativenumber!<CR>
+" Key: ]q | 下一个Quickfix匹配结果
+nnoremap ]q :cnext<CR>
+" Key: [q | 上一个Quickfix匹配结果
+nnoremap [q :cprev<CR>
 " Key: ]b | 下一个Buffer
 nnoremap ]b :bnext<CR>
 " Key: [b | 上一个Buffer
