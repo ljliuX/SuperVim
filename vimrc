@@ -1,3 +1,4 @@
+" vim: set tw=78 ts=4 sw=4 noet fdm=marker:
 " ============================================================================
 "                 _____                      _    ___
 "                / ___/__  ______  ___  ____| |  / (_)___ ___
@@ -8,7 +9,7 @@
 "
 " Author: ljliu <ljliu.cc@gmail.com>
 " Source: https://github.com/ljliuX/SuperVim
-" Last Modified: 2019-09-28 21:16
+" Last Modified: 2019-10-13 10:16
 " ============================================================================
 " SuperVim {{{
 " ============================================================================
@@ -137,6 +138,8 @@ if has('python3')
 	" 翻译工具
 	Plug 'voldikss/vim-translate-me'
 endif
+" 代码格式化
+Plug 'sbdchd/neoformat', {'on':'Neoformat'}
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'tpope/vim-fugitive'
 call plug#end()
@@ -255,16 +258,13 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	let g:gutentags_add_default_project_roots = 0
 	let g:gutentags_ctags_tagfile = '.tags'
 	let g:gutentags_cache_dir = g:SuperVim_cache_dir.'/tags'
+	if !isdirectory(g:gutentags_cache_dir)
+		call system(printf('mkdir -p %s', g:gutentags_cache_dir))
+	endif
 	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 	let g:gutentags_auto_add_gtags_cscope = 0
-	function! InitGutentagsCacheDir()
-		if !isdirectory(g:gutentags_cache_dir)
-			call system(printf('mkdir -p %s', g:gutentags_cache_dir))
-		endif
-	endfunction
-	call InitGutentagsCacheDir()
 
 	" Plugin: gutentags_plus | Gtags标签数据库管理
 	let g:gutentags_plus_nomap = 1
@@ -334,15 +334,30 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-translate-me')
 	let g:vtm_target_lang = 'zh'
 	let g:vtm_default_engines = ['youdao', 'google']
 	let g:vtm_history_dir = g:SuperVim_cache_dir.'/translate'
-	function! InitTranslateCacheDir()
-		if !isdirectory(g:vtm_history_dir)
-			call system(printf('mkdir -p %s', g:vtm_history_dir))
-		endif
-	endfunction
-	call InitTranslateCacheDir()
+	if !isdirectory(g:vtm_history_dir)
+		call system(printf('mkdir -p %s', g:vtm_history_dir))
+	endif
 	" Key: <Leader>t | 打开弹窗翻译光标下文本，两次进入弹窗，q退出
 	nmap <silent> <Leader>t <Plug>TranslateW
 	vmap <silent> <Leader>t <Plug>TranslateWV
+endif
+
+" }}}
+" ----------------------------------------------------------------------------
+" Plugin: neoformat | 代码格式化 {{{
+" ----------------------------------------------------------------------------
+if isdirectory(g:SuperVim_plug_dir.'/neoformat')
+	if executable('clang-format')
+		" 生成格式化配置文件：
+		" clang-format -style=google -dump-config > .clang-format
+		let g:neoformat_clangformat = { 'exe': 'clang-format',
+					\ 'args': ['-style=file'], 'stdin': 1 }
+		" C/C++ 格式化设置
+		let g:neoformat_c_clangformat   = g:neoformat_clangformat
+		let g:neoformat_cpp_clangformat = g:neoformat_clangformat
+		let g:neoformat_enabled_c       = ['clangformat']
+		let g:neoformat_enabled_cpp     = ['clangformat']
+	endif
 endif
 
 " }}}
@@ -458,6 +473,7 @@ nnoremap <Leader>q :quit<CR>
 nnoremap <Leader>p :setlocal paste!<CR>
 " Key: <Leader><Leader> | 取消高亮 & 关闭Quickfix窗口
 nnoremap <silent> <Leader><Leader> :nohlsearch<BAR>cclose<BAR>lclose<CR>
+
 " Key: <Leader>z | 最大化当前窗口
 nnoremap <silent> <leader>z :call <SID>zoom()<CR>
 function! s:zoom()
@@ -468,6 +484,9 @@ function! s:zoom()
 		tabclose
 	endif
 endfunction
+
+" Key: <Leader>s ｜快速打开当前配置文件
+execute printf('nnoremap <Leader>s :tabnew %s<CR>', $MYVIMRC)
 
 " }}}
 " ============================================================================
@@ -502,7 +521,7 @@ command! -nargs=1 TX call system('tmux split-window -d -l 16 '.<q-args>)
 augroup vimrc
 	" 保存vimrc后自动加载
 	au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
-				\| source % | endif
+				\| source % | set tw=78 ts=4 sw=4 noet fdm=marker | endif
 
 	" 离开插入模式关闭粘贴模式
 	au InsertLeave * silent! set nopaste
@@ -528,4 +547,3 @@ augroup END
 
 " }}}
 " ============================================================================
-" vim: set tw=78 ts=4 sw=4 noet foldmethod=marker:
