@@ -253,7 +253,7 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	" 在项目根目录执行"touch .root"以激活自动标签功能
 	let g:gutentags_project_root = ['.root']
 	let g:gutentags_add_default_project_roots = 0
-	let g:gutentags_ctags_tagfile = 'tags'
+	let g:gutentags_ctags_tagfile = '.tags'
 	let g:gutentags_cache_dir = g:SuperVim_cache_dir.'/tags'
 	let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
@@ -456,8 +456,18 @@ nnoremap <Leader>w :update<CR>
 nnoremap <Leader>q :quit<CR>
 " Key: <Leader>p | 切换粘贴模式
 nnoremap <Leader>p :setlocal paste!<CR>
-" Key: <Leader><Leader> | 取消高亮
-nnoremap <Leader><Leader> :nohlsearch<CR>
+" Key: <Leader><Leader> | 取消高亮 & 关闭Quickfix窗口
+nnoremap <silent> <Leader><Leader> :nohlsearch<BAR>cclose<BAR>lclose<CR>
+" Key: <Leader>z | 最大化当前窗口
+nnoremap <silent> <leader>z :call <SID>zoom()<CR>
+function! s:zoom()
+	if winnr('$') > 1
+		tab split
+	elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
+				\ 'index(v:val, '.bufnr('').') >= 0')) > 1
+		tabclose
+	endif
+endfunction
 
 " }}}
 " ============================================================================
