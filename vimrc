@@ -536,8 +536,12 @@ command! -nargs=1 TX call system('tmux split-window -d -l 16 '.<q-args>)
 " ----------------------------------------------------------------------------
 augroup vimrc
 	" 保存vimrc后自动加载
-	au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
-				\| source % | set tw=78 ts=4 sw=4 noet fdm=marker | endif
+	if !exists('#vimrc#BufWritePost#vimrc')
+		au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
+					\| source % | set tw=78 ts=4 sw=4 noet fdm=marker
+					\| echomsg 'source '.expand('%').' success~'
+					\| endif
+	endif
 
 	" 离开插入模式关闭粘贴模式
 	au InsertLeave * silent! set nopaste
