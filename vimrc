@@ -111,9 +111,7 @@ call plug#begin(g:SuperVim_plug_dir)
 Plug 'morhetz/gruvbox'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'neomake/neomake'
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
@@ -161,9 +159,6 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-airline')
 	endif
 	if isdirectory(g:SuperVim_plug_dir.'/gutentags')
 		let g:airline#extensions#gutentags#enabled = 1
-	endif
-	if isdirectory(g:SuperVim_plug_dir.'/ale')
-		let g:airline#extensions#ale#enabled = 1
 	endif
 	let g:airline#extensions#tabline#buffer_idx_mode = 1
 	nmap <leader>1 <Plug>AirlineSelectTab1
