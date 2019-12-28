@@ -108,7 +108,7 @@ if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
 	if executable('gtags-cscope') && executable('gtags')
-		Plug 'skywind3000/gutentags_plus'
+		Plug 'skywind3000/gutentags_plus', { 'on': 'GscopeFind' }
 	endif
 endif
 if has('python3')
@@ -128,7 +128,7 @@ endif
 Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'tpope/vim-fugitive'
-Plug 'skywind3000/asyncrun.vim', { 'on': 'AsyncRun' }
+Plug 'skywind3000/asyncrun.vim'
 call plug#end()
 
 " }}}
@@ -403,6 +403,7 @@ set noshowmode
 set wildmenu
 set splitright
 set splitbelow
+set modeline
 set complete-=i
 set completeopt=menu
 
@@ -422,9 +423,7 @@ set smartindent
 " ----------------------------------------------------------------------------
 " Colorscheme {{{
 " ----------------------------------------------------------------------------
-if &term == "screen"
-	set t_Co=256
-endif
+set t_Co=256
 set background=dark
 
 if !exists("g:syntax_on")
@@ -482,6 +481,12 @@ nnoremap <Leader>p :setlocal paste!<CR>
 " Key: <Leader><Leader> | Stop the highlighting
 nnoremap <silent> <Leader><Leader> :nohlsearch<CR>
 
+inoremap ' ''<Esc>i
+inoremap " ""<Esc>i
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+
 " Key: <Leader>z | Zoom
 nnoremap <silent> <leader>z :call <SID>zoom()<CR>
 function! s:zoom()
@@ -493,8 +498,10 @@ function! s:zoom()
 	endif
 endfunction
 
-" Key: <Leader>sv | Open vimrc
-execute printf('nnoremap <Leader>sv :tabnew %s<CR>', $MYVIMRC)
+" Key: <Leader>ev | edit vimrc
+nnoremap <Leader>ev :vsp $MYVIMRC<CR>
+" Key: <Leader>sv | source vimrc
+nnoremap <Leader>sv :source $MYVIMRC<CR>
 
 " }}}
 " ============================================================================
@@ -520,14 +527,6 @@ command! Root call s:root()
 " AUTOCMD {{{
 " ----------------------------------------------------------------------------
 augroup vimrc
-	" Automatic reload vimrc
-	if !exists('#vimrc#BufWritePost#vimrc')
-		au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
-					\| source % | set tw=78 ts=4 sw=4 noet fdm=marker
-					\| echomsg 'source '.expand('%').' success~'
-					\| endif
-	endif
-
 	" Unset paste on InsertLeave
 	au InsertLeave * silent! set nopaste
 
