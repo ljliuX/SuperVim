@@ -9,33 +9,24 @@
 "
 " Author: ljliu <ljliu.cc@gmail.com>
 " Source: https://github.com/ljliuX/SuperVim
-" Last Modified: 2019-10-13 10:16
+" Last Modified: 2019-12-29 03:16
 " ============================================================================
 " SuperVim {{{
 " ============================================================================
 
-" 默认主题
 let g:SuperVim_theme = 'gruvbox'
-
-" 运行目录
 let g:SuperVim_home = $HOME.'/.SuperVim'
-
-" 插件下载目录
 let g:SuperVim_plug_dir = g:SuperVim_home.'/plugged'
-
-" 缓存文件目录
 let g:SuperVim_cache_dir = g:SuperVim_home.'/cache'
-
-" 设置 leader 键
 let mapleader = "\<Space>"
 
 " }}}
 " ============================================================================
-" 初始化 {{{
+" Init {{{
 " ============================================================================
 
 " ----------------------------------------------------------------------------
-" SuperVim 运行目录 {{{
+" SuperVim runtime {{{
 " ----------------------------------------------------------------------------
 function! InitSuperVim()
 	if !isdirectory(g:SuperVim_home)
@@ -52,7 +43,7 @@ call InitSuperVim()
 
 " }}}
 " ----------------------------------------------------------------------------
-" 文件缓存目录 {{{
+" Cache directory {{{
 " ----------------------------------------------------------------------------
 function! InitCacheDirs()
 	let l:dir_list = {
@@ -73,7 +64,7 @@ call InitCacheDirs()
 
 " }}}
 " ----------------------------------------------------------------------------
-" vim 默认配置 {{{
+" Default vim scripts {{{
 " ----------------------------------------------------------------------------
 function! InitVimDefault()
 	let l:vim_default = $VIMRUNTIME.'/defaults.vim'
@@ -85,7 +76,7 @@ call InitVimDefault()
 
 " }}}
 " ----------------------------------------------------------------------------
-" 插件管理器 {{{
+" Init Plugin Manager {{{
 " ----------------------------------------------------------------------------
 function! InitVimPlug()
 	let l:vim_plug_dir = g:SuperVim_plug_dir.'/vim-plug'
@@ -105,7 +96,7 @@ call InitVimPlug()
 
 " }}}
 " ============================================================================
-" 插件加载 {{{
+" Plugins {{{
 " ============================================================================
 call plug#begin(g:SuperVim_plug_dir)
 Plug 'morhetz/gruvbox'
@@ -121,7 +112,6 @@ if executable('ctags')
 	endif
 endif
 if has('python3')
-	" deoplete 自动补全系列
 	if has('nvim')
 		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	else
@@ -133,22 +123,21 @@ if has('python3')
 	if executable('clang')
 		Plug 'Shougo/deoplete-clangx'
 	endif
-	" 翻译工具
-	Plug 'voldikss/vim-translate-me'
+	Plug 'voldikss/vim-translator'
 endif
-" 代码格式化
-Plug 'sbdchd/neoformat', {'on':'Neoformat'}
+Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 Plug 'tpope/vim-fugitive'
+Plug 'skywind3000/asyncrun.vim', { 'on': 'AsyncRun' }
 call plug#end()
 
 " }}}
 " ============================================================================
-" 插件参数 {{{
+" Plugin Settings {{{
 " ============================================================================
 
 " ----------------------------------------------------------------------------
-" Plugin: airline | 状态栏美化 {{{
+" Plugin: airline | Beautify statusline {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-airline')
 	let g:airline#extensions#tabline#enabled = 1
@@ -176,32 +165,32 @@ endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: nerdtree | 文件列表 {{{
+" Plugin: nerdtree | Filesystem explorer {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/nerdtree')
 	let NERDTreeWinPos = 'right'
 	let NERDTreeWinSize = 31
 	let NERDTreeAutoDeleteBuffer = 1
 	let NERDTreeIgnore = ['\.o$', '\.git$', '\.svn$']
-	" Key: <F3> | 文件列表
+	" Key: <F3> | Toggle file list
 	nnoremap <F3> :NERDTreeToggle<CR>
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: tagbar | 标签列表 {{{
+" Plugin: tagbar | Display tags in a window {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/tagbar')
 	let g:tagbar_left = 1
 	let g:tagbar_width = 31
 	let g:tagbar_sort = 0
-	" Key: <F2> | 标签列表
+	" Key: <F2> | Toggle tag list window
 	nnoremap <F2> :TagbarToggle<CR>
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: gruvbox | 配色方案 {{{
+" Plugin: gruvbox | Retro groove color scheme {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/gruvbox')
 	let g:gruvbox_contrast_dark = 'soft'
@@ -211,7 +200,7 @@ endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: startify | 开始页面 {{{
+" Plugin: startify | Start screen {{{
 " ----------------------------------------------------------------------------
 let g:startify_custom_header = [
 			\ '                 _____                      _    ___          ',
@@ -225,7 +214,7 @@ let g:startify_change_to_dir = 0
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: cpp-enhanced-highlight | C++ 高亮增强 {{{
+" Plugin: cpp-enhanced-highlight | C++ syntax highlighting {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-cpp-enhanced-highlight')
 	let g:cpp_class_scope_highlight = 1
@@ -237,7 +226,7 @@ endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: gutentags | 标签管理工具 {{{
+" Plugin: gutentags | Tag files manager {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	let g:gutentags_define_advanced_commands = 1
@@ -248,7 +237,7 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	if executable('gtags-cscope') && executable('gtags')
 		let g:gutentags_modules += ['gtags_cscope']
 	endif
-	" 在项目根目录执行"touch .root"以激活自动标签功能
+	" Excute command *touch .root* to enable
 	let g:gutentags_project_root = ['.root']
 	let g:gutentags_add_default_project_roots = 0
 	let g:gutentags_ctags_tagfile = 'ctags'
@@ -271,33 +260,33 @@ if isdirectory(g:SuperVim_plug_dir.'/vim-gutentags')
 	" let g:gutentags_trace = 1
 	" gutentags: gtags-cscope job failed, returned: 1
 	" https://github.com/ludovicchabant/vim-gutentags/issues/225
-	" 删除目录 $HOME/.SuperVim/cache 解决
+	" Resoulved by delete $HOME/.SuperVim/cache
 
-	" Plugin: gutentags_plus | Gtags标签数据库管理
+	" Plugin: gutentags_plus | Gtags database manager
 	let g:gutentags_plus_nomap = 1
-	" Key: <Leader>cs | 查看光标下符号的引用
+	" Key: <Leader>cs | Find this C symbol
 	noremap <silent> <Leader>cs :GscopeFind s <C-r><C-w><CR>
-	" Key: <Leader>cg | 查看光标下符号的定义
+	" Key: <Leader>cg | Find this definition
 	noremap <silent> <Leader>cg :GscopeFind g <C-r><C-w><CR>
-	" Key: <Leader>cc | 查看有哪些函数调用了该函数
+	" Key: <Leader>cc | Find functions calling this function
 	noremap <silent> <Leader>cc :GscopeFind c <C-r><C-w><CR>
-	" Key: <Leader>ct | 搜索光标下的文本
+	" Key: <Leader>ct | Find this text string
 	noremap <silent> <Leader>ct :GscopeFind t <C-r><C-w><CR>
-	" Key: <Leader>ce | egrep搜索光标下模式串
+	" Key: <Leader>ce | Find this egrep pattern
 	noremap <silent> <Leader>ce :GscopeFind e <C-r><C-w><CR>
-	" Key: <Leader>cf | 查找光标下的文件
+	" Key: <Leader>cf | Find this file
 	noremap <silent> <Leader>cf :GscopeFind f <C-r>=expand("<cfile>")<CR><CR>
-	" Key: <Leader>ci | 查找哪些文件include了本文件
+	" Key: <Leader>ci | Find files #including this file
 	noremap <silent> <Leader>ci :GscopeFind i <C-r>=expand("<cfile>")<CR><CR>
-	" Key: <Leader>cd | 当前函数调用了哪些函数
+	" Key: <Leader>cd | Find functions called by this function
 	noremap <silent> <Leader>cd :GscopeFind d <C-r><C-w><CR>
-	" Key: <Leader>ca | 当前符号在什么地方被赋值
+	" Key: <Leader>ca | Find assignments to this symbol
 	noremap <silent> <Leader>ca :GscopeFind a <C-r><C-w><CR>
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: deoplete | 自动补全框架 {{{
+" Plugin: deoplete | Asynchronous completion framework {{{
 " ----------------------------------------------------------------------------
 if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
 	let g:deoplete#enable_at_startup = 1
@@ -313,53 +302,47 @@ if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
 					\ system('which clang'))
 	endif
 
-	" Plugin: echodoc.vim | 显示函数签名
+	" Plugin: echodoc.vim | Displays function signatures
 	let g:echodoc_enable_at_startup = 1
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: vim-fugitive | Git 工具 {{{
+" Plugin: vim-fugitive | Git wrapper {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/vim-fugitive')
-	" Key: <Leader>gs | 打开窗口进行 git status 操作
+	" Key: <Leader>gs | git status
 	map      <Leader>gs :Gstatus<CR>gg<C-n>
-	" Key: <Leader>gd | vimdiff 当前文件与 HEAD 版本
+	" Key: <Leader>gd | git diff
 	nnoremap <Leader>gd :Gdiffsplit!<CR>
-	" Key: <Leader>gc | 打开窗口进行 git commit 操作
+	" Key: <Leader>gc | git commit
 	nnoremap <Leader>gc :Gcommit<CR>
-	" Key: <Leader>gl | 打开 quickfix 窗口，显示提交记录
+	" Key: <Leader>gl | git log
 	nnoremap <Leader>gl :Glog!<CR>
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: vim-translate-me | 翻译工具 {{{
+" Plugin: vim-translator | Translate tool {{{
 " ----------------------------------------------------------------------------
-if isdirectory(g:SuperVim_plug_dir.'/vim-translate-me')
-	let g:vtm_default_mapping = 0
-	let g:vtm_target_lang = 'zh'
-	let g:vtm_default_engines = ['youdao', 'google']
-	let g:vtm_history_dir = g:SuperVim_cache_dir.'/translate'
-	if !isdirectory(g:vtm_history_dir)
-		call system(printf('mkdir -p %s', g:vtm_history_dir))
-	endif
-	" Key: <Leader>t | 打开弹窗翻译光标下文本，两次进入弹窗，q退出
+if isdirectory(g:SuperVim_plug_dir.'/vim-translator')
+	let g:translator_target_lang = 'zh'
+	let g:translator_default_engines = ['youdao', 'google']
+	" Key: <Leader>t | Display the translation in a window
 	nmap <silent> <Leader>t <Plug>TranslateW
 	vmap <silent> <Leader>t <Plug>TranslateWV
 endif
 
 " }}}
 " ----------------------------------------------------------------------------
-" Plugin: neoformat | 代码格式化 {{{
+" Plugin: neoformat | Code formater {{{
 " ----------------------------------------------------------------------------
 if isdirectory(g:SuperVim_plug_dir.'/neoformat')
 	if executable('clang-format')
-		" 生成格式化配置文件：
-		" clang-format -style=google -dump-config > .clang-format
+		" To enable: clang-format -style=google -dump-config > .clang-format
 		let g:neoformat_clangformat = { 'exe': 'clang-format',
 					\ 'args': ['-style=file'], 'stdin': 1 }
-		" C/C++ 格式化设置
+		" Specific for C/C++
 		let g:neoformat_c_clangformat   = g:neoformat_clangformat
 		let g:neoformat_cpp_clangformat = g:neoformat_clangformat
 		let g:neoformat_enabled_c       = ['clangformat']
@@ -369,14 +352,25 @@ endif
 
 " }}}
 " ----------------------------------------------------------------------------
+" Plugin: asyncrun.vim | Run Async Shell Commands {{{
+" ----------------------------------------------------------------------------
+if isdirectory(g:SuperVim_plug_dir.'/asyncrun.vim')
+	" Key: <Leader><CR> | Run shell command
+	nnoremap <Leader><CR> :AsyncRun<Space>
+	" Key: <F9> | Toggle Quickfix window
+	nnoremap <silent> <F9> :call asyncrun#quickfix_toggle(8)<CR>
+endif
+
+" }}}
+" ----------------------------------------------------------------------------
 
 " }}}
 " ============================================================================
-" 基础设置 {{{
+" Basic {{{
 " ============================================================================
 
 " ----------------------------------------------------------------------------
-" 行为 {{{
+" Performance {{{
 " ----------------------------------------------------------------------------
 set autoread
 set autowrite
@@ -393,7 +387,7 @@ filetype plugin indent on
 
 " }}}
 " ----------------------------------------------------------------------------
-" 界面 {{{
+" Interface {{{
 " ----------------------------------------------------------------------------
 set shortmess=atI
 set mouse=
@@ -409,11 +403,12 @@ set noshowmode
 set wildmenu
 set splitright
 set splitbelow
+set complete-=i
 set completeopt=menu
 
 " }}}
 " ----------------------------------------------------------------------------
-" 缩进选项 {{{
+" Indent {{{
 " ----------------------------------------------------------------------------
 set nowrap
 set tabstop=4
@@ -425,9 +420,11 @@ set smartindent
 
 " }}}
 " ----------------------------------------------------------------------------
-" 颜色主题 {{{
+" Colorscheme {{{
 " ----------------------------------------------------------------------------
-set t_Co=256
+if &term == "screen"
+	set t_Co=256
+endif
 set background=dark
 
 if !exists("g:syntax_on")
@@ -445,47 +442,47 @@ endtry
 
 " }}}
 " ============================================================================
-" 快捷键映射 {{{
+" Mappings {{{
 " ============================================================================
 
-" Key: <F1> | 切换行号模式相对/绝对
+" Key: <F1> | Toggle relative line number
 nnoremap <F1> :setlocal relativenumber!<CR>
-" Key: ]q | 下一个Quickfix匹配结果
+" Key: ]q | Next Quickfix error
 nnoremap ]q :cnext<CR>
-" Key: [q | 上一个Quickfix匹配结果
+" Key: [q | Previous Quickfix error
 nnoremap [q :cprev<CR>
-" Key: ]b | 下一个Buffer
+" Key: ]b | Next buffer in buffer list
 nnoremap ]b :bnext<CR>
-" Key: [b | 上一个Buffer
+" Key: [b | Previous buffer in buffer list
 nnoremap [b :bprev<CR>
-" Key: ]t | 下一个Tab
+" Key: ]t | Go to the next tab page
 nnoremap ]t :tabnext<CR>
-" Key: [t | 上一个Tab
+" Key: [t | Go to the previous tab page
 nnoremap [t :tabprev<CR>
-" Key: <C-j> | 插入模式，移动光标到上一行
+" Key: <C-j> | Downword in insert mode
 inoremap <C-j> <C-o>j
-" Key: <C-k> | 插入模式，移动光标到下一行
+" Key: <C-k> | Upward in insert mode
 inoremap <C-k> <C-o>k
-" Key: <C-a> | 插入模式，移动光标到行首
+" Key: <C-a> | To first char in insert mode
 inoremap <C-a> <C-o><Home>
-" Key: <C-e> | 插入模式，移动光标到行尾
+" Key: <C-e> | To the end of the line in insert mode
 inoremap <C-e> <C-o><End>
-" Key: jk | 回到普通模式
+" Key: jk | Escaping!
 inoremap jk <Esc>
 xnoremap jk <Esc>
 cnoremap jk <Esc>
-" Key: <Tab> | 切换标签
+" Key: <Tab> | Move cursor to next window
 nnoremap <Tab> <C-w>w
-" Key: <Leader>w | 保存缓冲区
+" Key: <Leader>w | Write when the buffer has been modified
 nnoremap <Leader>w :update<CR>
-" Key: <Leader>q | 关闭窗口
+" Key: <Leader>q | Quit the current window
 nnoremap <Leader>q :quit<CR>
-" Key: <Leader>p | 切换粘贴模式
+" Key: <Leader>p | Toggle the paste mode
 nnoremap <Leader>p :setlocal paste!<CR>
-" Key: <Leader><Leader> | 取消高亮 & 关闭Quickfix窗口
-nnoremap <silent> <Leader><Leader> :nohlsearch<BAR>cclose<BAR>lclose<CR>
+" Key: <Leader><Leader> | Stop the highlighting
+nnoremap <silent> <Leader><Leader> :nohlsearch<CR>
 
-" Key: <Leader>z | 最大化当前窗口
+" Key: <Leader>z | Zoom
 nnoremap <silent> <leader>z :call <SID>zoom()<CR>
 function! s:zoom()
 	if winnr('$') > 1
@@ -496,16 +493,16 @@ function! s:zoom()
 	endif
 endfunction
 
-" Key: <Leader>s ｜快速打开当前配置文件
-execute printf('nnoremap <Leader>s :tabnew %s<CR>', $MYVIMRC)
+" Key: <Leader>sv | Open vimrc
+execute printf('nnoremap <Leader>sv :tabnew %s<CR>', $MYVIMRC)
 
 " }}}
 " ============================================================================
-" 其他 {{{
+" Others {{{
 " ============================================================================
 
 " ----------------------------------------------------------------------------
-" 切换到Git根目录 {{{
+" Change directory to the root of the Git repository {{{
 " ----------------------------------------------------------------------------
 function! s:root()
 	let root = systemlist('git rev-parse --show-toplevel')[0]
@@ -520,17 +517,10 @@ command! Root call s:root()
 
 " }}}
 " ----------------------------------------------------------------------------
-" TX | 打开tmux分屏窗口执行shell命令，结束后退出 {{{
-" ----------------------------------------------------------------------------
-cnoremap !! TX<Space>
-command! -nargs=1 TX call system('tmux split-window -d -l 16 '.<q-args>)
-
-" }}}
-" ----------------------------------------------------------------------------
 " AUTOCMD {{{
 " ----------------------------------------------------------------------------
 augroup vimrc
-	" 保存vimrc后自动加载
+	" Automatic reload vimrc
 	if !exists('#vimrc#BufWritePost#vimrc')
 		au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive'
 					\| source % | set tw=78 ts=4 sw=4 noet fdm=marker
@@ -538,24 +528,28 @@ augroup vimrc
 					\| endif
 	endif
 
-	" 离开插入模式关闭粘贴模式
+	" Unset paste on InsertLeave
 	au InsertLeave * silent! set nopaste
 
-	" 自动修改tmux窗口名称
-	if exists('$TMUX') && !exists('$NORENAME')
+	" Automatic rename of tmux window
+	if exists('$TMUX')
 		au BufEnter * if empty(&buftype)
 					\| call system('tmux rename-window '.expand('%:t:S'))
 					\| endif
 		au VimLeave * call system('tmux set-window automatic-rename on')
 	endif
+
+	" Open quickfix window when text adds to it
+	autocmd QuickFixCmdPost * botright copen 8
 augroup END
 
 " }}}
 " ----------------------------------------------------------------------------
-" 参考资料 {{{
+" References {{{
 " ----------------------------------------------------------------------------
 " https://github.com/junegunn/dotfiles/blob/master/vimrc
 " https://zhuanlan.zhihu.com/p/36279445
+" https://github.com/skywind3000/asyncrun.vim/wiki
 
 " }}}
 " ----------------------------------------------------------------------------
