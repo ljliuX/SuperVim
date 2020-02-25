@@ -103,7 +103,6 @@ Plug 'morhetz/gruvbox'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 if executable('ctags')
 	Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 	Plug 'ludovicchabant/vim-gutentags'
@@ -112,6 +111,7 @@ if executable('ctags')
 	endif
 endif
 if has('python3')
+	Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 	if has('nvim')
 		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	else
@@ -175,6 +175,8 @@ if isdirectory(g:SuperVim_plug_dir.'/nerdtree')
 	" Key: <F3> | Toggle file list
 	nnoremap <F3> :NERDTreeToggle<CR>
 endif
+" Don't use netrw
+let g:loaded_netrw = 1
 
 " }}}
 " ----------------------------------------------------------------------------
@@ -289,7 +291,7 @@ endif
 " Plugin: deoplete | Asynchronous completion framework {{{
 " ----------------------------------------------------------------------------
 if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
-	let g:deoplete#enable_at_startup = 1
+	let g:deoplete#enable_at_startup = 0
 	call deoplete#custom#option({
 				\ 'auto_complete_delay': 200,
 				\ 'smart_case': v:true,
@@ -359,6 +361,18 @@ if isdirectory(g:SuperVim_plug_dir.'/asyncrun.vim')
 	nnoremap <Leader><CR> :AsyncRun<Space>
 	" Key: <F9> | Toggle Quickfix window
 	nnoremap <silent> <F9> :call asyncrun#quickfix_toggle(8)<CR>
+	let s:asyncrum_exists = 1
+endif
+
+" }}}
+" ----------------------------------------------------------------------------
+" Plugin: LeaderF | Search tools {{{
+" ----------------------------------------------------------------------------
+if isdirectory(g:SuperVim_plug_dir.'LeaderF')
+    let g:Lf_CacheDirectory = g:SuperVim_cache_dir.'/leaderf'
+	if !isdirectory(g:Lf_CacheDirectory)
+		call system(printf('mkdir -p %s', g:Lf_CacheDirectory))
+	endif
 endif
 
 " }}}
@@ -414,7 +428,7 @@ set completeopt=menu
 set nowrap
 set tabstop=4
 set shiftwidth=4
-set expandtab
+" set expandtab
 set smarttab
 set autoindent
 set smartindent
@@ -539,7 +553,9 @@ augroup vimrc
 	endif
 
 	" Open quickfix window when text adds to it
-	autocmd QuickFixCmdPost * botright copen 8
+	if exists('s:asyncrum_exists')
+		autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
+	endif
 augroup END
 
 " }}}
