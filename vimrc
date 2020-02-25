@@ -291,7 +291,7 @@ endif
 " Plugin: deoplete | Asynchronous completion framework {{{
 " ----------------------------------------------------------------------------
 if has('python3') && isdirectory(g:SuperVim_plug_dir.'/deoplete.nvim')
-	let g:deoplete#enable_at_startup = 0
+	let g:deoplete#enable_at_startup = 1
 	call deoplete#custom#option({
 				\ 'auto_complete_delay': 200,
 				\ 'smart_case': v:true,
@@ -368,8 +368,8 @@ endif
 " ----------------------------------------------------------------------------
 " Plugin: LeaderF | Search tools {{{
 " ----------------------------------------------------------------------------
-if isdirectory(g:SuperVim_plug_dir.'LeaderF')
-    let g:Lf_CacheDirectory = g:SuperVim_cache_dir.'/leaderf'
+if isdirectory(g:SuperVim_plug_dir.'/LeaderF')
+	let g:Lf_CacheDirectory = g:SuperVim_cache_dir.'/leaderf'
 	if !isdirectory(g:Lf_CacheDirectory)
 		call system(printf('mkdir -p %s', g:Lf_CacheDirectory))
 	endif
